@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=794, initial-scale=1.0"> 
+    <title>كشف الركاب - حل مشكلة قص الصفحات</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* التعديلات الأساسية لضمان عدم القص */
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
+        
+        body { 
+            background-color: #525659; 
+            margin: 0; padding: 0; 
+            display: flex; flex-direction: column; align-items: center; 
+            font-family: 'Arial', sans-serif; 
+        }
+
+        .header-bg { width: 100%; height: 160px; background: #2c3e50; display: flex; align-items: center; justify-content: center; }
+
+        .toolbar { width: 100%; background: #333; padding: 15px; position: sticky; top: 0; z-index: 1000; text-align: center; }
+        .share-btn, .print-btn, .back-btn, .clear-btn { padding: 12px 20px; border: none; border-radius: 50px; cursor: pointer; font-size: 14px; font-weight: bold; margin: 5px; color: white; }
+        .share-btn { background: #27ae60; }
+        .print-btn { background: #e67e22; }
+        .back-btn { background: #95a5a6; }
+        .clear-btn { background: #c0392b; }
+        
+        /* هذا الجزء مهم جداً لسفاري: جعل الحاوية مطابقة تماماً لمقاس A4 */
+        #pdf-content { 
+            width: 210mm; 
+            display: block; 
+            background: white; 
+            padding: 0;
+            margin: 0;
+        }
+
+        .page { 
+            width: 210mm; 
+            height: 296.5mm; /* تقليل بسيط جداً لتجنب تداخل الصفحات في سفاري */
+            background-size: 100% 100%; 
+            background-repeat: no-repeat; 
+            position: relative; 
+            background-color: white; 
+            overflow: hidden; 
+            display: block; 
+            page-break-after: always;
+            box-shadow: none;
+        }
+
+        #page1 { background-image: url('0001.jpg'); }
+        #page2 { background-image: url('0002.jpg'); }
+        #page3 { background-image: url('0003.jpg'); }
+        #page4 { background-image: url('0004.jpg'); }
+
+        input { position: absolute; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(0,0,0,0.1); font-size: 14px; text-align: center; outline: none; color: black; }
+        .exporting input { border: none !important; background: transparent !important; }
+
+        /* تموضع الخانات (نفس إحداثياتك) */
+        .inp-date-top { top: 358px; left: 55px; width: 130px; }
+        .plate-num { top: 425px; left: 210px; width: 120px; }
+        .driver-name { top: 425px; left: 343px; width: 190px; }
+        .id-num { top: 425px; left: 542px; width: 110px; }
+        .phone-num { top: 425px; left: 665px; width: 84px; }
+        .from-loc { top: 458px; left: 48px; width: 151px; }
+        .to-loc { top: 458px; left: 343px; width: 190px; }
+        .car-type { top: 425px; left: 55px; width: 130px; }
+        .col-name { left: 420px; width: 285px; }
+        .col-nat { left: 285px; width: 120px; }
+        .col-passport { left: 55px; width: 220px; }
+
+        @media print { 
+            .header-bg, .toolbar { display: none !important; }
+            @page { size: A4; margin: 0 !important; } 
+            .page { margin: 0 !important; border: none !important; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toolbar">
+        <button id="shareBtn" class="share-btn">📤 مشاركة واتساب PDF </button>
+        <button id="printBtn" class="print-btn">🖨️ طباعة كمبيوتر</button>
+        <button class="clear-btn" onclick="clearData()">🗑️ مسح البيانات</button>
+        <button class="back-btn" onclick="window.history.back()">رجوع</button>
+    </div>
+
+    <div id="pdf-content">
+        <div class="page" id="page1">
+         <input type="text" id="todayDate" class="inp-date-top" data-save="d1">
+            <input type="text" class="plate-num" data-save="d2">
+            <input type="text" class="driver-name" data-save="d3">
+            <input type="text" class="id-num" data-save="d4">
+            <input type="text" class="phone-num" data-save="d5">
+            <input type="text" class="from-loc" data-save="d6">
+            <input type="text" class="to-loc" data-save="d7">
+            <input type="text" class="car-type" data-save="d8">
+            <div id="passenger-inputs"></div>
+        </div>
+        <div class="page" id="page2"></div>
+        <div class="page" id="page3"></div>
+        <div class="page" id="page4"></div>
+    </div>
+
+    <script>
+        // --- إعداد الهوية وتوليد الخانات (نفس الكود السابق) ---
+        const path = window.location.pathname;
+        let pageID = path.includes('/100/') ? "D100_" : (path.includes('/101/') ? "D101_" : "D102_");
+        
+        const container = document.getElementById('passenger-inputs');
+        let startTop = 550, rowHeight = 27.5, rowsHtml = '';
+        for (let i = 0; i < 16; i++) {
+            let top = startTop + (i * rowHeight);
+            rowsHtml += `<input type="text" class="col-name" style="top: ${top}px;" data-save="n${i}">`;
+            rowsHtml += `<input type="text" class="col-nat" style="top: ${top}px;" data-save="nat${i}">`;
+            rowsHtml += `<input type="text" class="col-passport" style="top: ${top}px;" data-save="p${i}">`;
+        }
+        container.innerHTML = rowsHtml;
+
+        const allInputs = document.querySelectorAll('input[data-save]');
+ // دالة التاريخ: قمت بتغيير الترتيب هنا ليصبح (يوم - شهر - سنة)
+        function applyTodayDate() {
+            const dateInput = document.getElementById('todayDate');
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            
+            // الترتيب: يوم-شهر-سنة
+            const dateString = yyyy + '-' + mm + '-' + dd;
+            
+            dateInput.value = dateString;
+            localStorage.setItem(pageID + "d1", dateString);
+        }
+
+        // حفظ البيانات
+        allInputs.forEach(input => {
+            input.addEventListener('input', () => localStorage.setItem(pageID + input.getAttribute('data-save'), input.value));
+        });
+        window.addEventListener('load', () => {
+            allInputs.forEach(input => {
+                const val = localStorage.getItem(pageID + input.getAttribute('data-save'));
+                if (val) input.value = val;
+            });
+            // وضع التاريخ الحالي دائماً
+            applyTodayDate();
+        });
+
+        function clearData() { if(confirm("مسح؟")) { allInputs.forEach(i => { localStorage.removeItem(pageID+i.getAttribute('data-save')); i.value=''; }); } }
+
+        // --- التعديل الجذري لحل مشكلة القص في سفاري وآيفون ---
+        document.getElementById('shareBtn').addEventListener('click', async function() {
+            const element = document.getElementById('pdf-content');
+            
+            // 1. إضافة كلاس التصدير
+            element.classList.add('exporting');
+            
+            // 2. إعدادات خاصة جداً لسفاري
+            const opt = {
+                margin: 0,
+                filename: 'كشف_الركاب.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,           // تحسين الدقة
+                    useCORS: true, 
+                    logging: false,
+                    letterRendering: true,
+                    allowTaint: false,
+                    scrollX: 0,         // منع الإزاحة الجانبية
+                    scrollY: 0,
+                    windowWidth: 794    // تثبيت عرض النافذة أثناء الالتقاط لسفاري
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            try {
+                // إجبار المتصفح على العودة لأعلى الصفحة قبل البدء (مهم لسفاري)
+                window.scrollTo(0, 0);
+                
+                const pdfWorker = html2pdf().set(opt).from(element);
+                
+                if (navigator.share && navigator.canShare) {
+                    const pdfBlob = await pdfWorker.output('blob');
+                    const file = new File([pdfBlob], "كشف_الركاب.pdf", { type: "application/pdf" });
+                    
+                    await navigator.share({
+                        files: [file],
+                        title: 'كشف الركاب'
+                    });
+                } else {
+                    await pdfWorker.save();
+                }
+            } catch (err) {
+                console.error(err);
+                alert("حدث خطأ، سيتم التحميل المباشر");
+                html2pdf().set(opt).from(element).save();
+            } finally {
+                element.classList.remove('exporting');
+            }
+        });
+
+        document.getElementById('printBtn').addEventListener('click', () => window.print());
+    </script>
+</body>
+</html>

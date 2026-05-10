@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام شركة درب لاين - الرئيسية</title>
+    <style>
+        * { box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f4f7f6; 
+            text-align: center; 
+        }
+
+        /* الجزء العلوي */
+         .header-section {
+            width: 100%;
+            height: 300px; /* زيادة الارتفاع لاستيعاب الشعار */
+            background-image: linear-gradient(rgba(0,0,0,0.100), rgba(0,0,0,0.100)), url('header_bg.jpg'); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 5px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            width: 250px;
+            height: 250px;
+            background-image: url('logo.png'); 
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0 auto 10px auto;
+            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5));
+        }
+
+        .header-section h1 { 
+            margin: -40px auto 50px auto; 
+            font-size: 26px; 
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.90); }
+
+        /* حاوية القوائم الأساسية */
+        .main-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: -30px auto 30px auto;
+        }
+
+        .menu-column {
+            flex: 1;
+            min-width: 320px;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h2 { 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+            font-size: 18px; 
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        /* ألوان قائمة كشف الركاب (اليمين) */
+        .btn-ksh { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        
+        /* ألوان قائمة تقرير الفحص (اليسار) */
+        .btn-tq { background: linear-gradient(135deg, #2980b9, #3498db); }
+        
+        /* لون زر كشف جديد */
+        .btn-100 { background: linear-gradient(135deg, #d35400, #e67e22); }
+
+        .btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            filter: brightness(1.1);
+        }
+
+        .status-bar {
+            width: 100%;
+            max-width: 660px;
+            margin: 20px auto;
+            font-size: 13px;
+            color: #7f8c8d;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-section">
+        <div class="logo"></div>
+        <h1>شركة درب لاين</h1>
+        <h1>نظام الكشوفات والتقارير</h1>
+    </div>
+
+    <div class="main-wrapper">
+        
+        <div class="menu-column">
+            <h2>📋 قائمة كشف الركاب</h2>
+            <a href="ksh/2/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: عيسى شافي')">
+                👤 عيسى محمد شافي
+            </a>
+            <a href="ksh/1/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: صالح أمين')">
+                👤 صالح محمد امين
+            </a>
+            <a href="ksh/3/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: مصطفى مبارك')">
+                👤 مصطفى مبارك عبد الماجيد
+            </a>
+            <a href="ksh/4/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: حبيب كالو')">
+                👤 حبيب محمد كالو
+            </a>
+            <a href="ksh/5/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: محمد موسى')">
+                👤 محمد محمد حسين موسى
+            </a>
+            <a href="ksh/6/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: حسين احمد')">
+                👤 حسين عبدالملك نور احمد
+            </a>
+            <a href="ksh/7/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: ابراهيم مياه')">
+                👤 ابراهيم ولي مياه
+            </a>
+            <a href="ksh/8/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: نور عبدالعزيز')">
+                👤 نور عبدالعزيز مخلص
+            </a>
+            <a href="ksh/9/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: عواف المشور')">
+                👤 عواف محمد هاشم المشور
+            </a>
+            <a href="ksh/10/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: محمد حسين')">
+                👤 محمد احمد محمد حسين
+            </a>
+            <a href="ksh/11/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: عبدالرحمن علي')">
+                👤 عبدالرحمن اصدر علي
+            </a>
+            <a href="ksh/12/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: رشاد اسلام ')">
+                👤 رشاد عبدالمجيد محمد اسلام 
+                       </a>
+            <a href="ksh/13/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: يوسف عبدالكريم ')">
+                👤 يوسف ابو حسين عبدالكريم 
+                      </a>
+            <a href="ksh/14/index.html" class="btn btn-ksh" onclick="saveVisit('كشف ركاب: محمد اكبر ')">
+                👤 محمد اكبر محمدعلي 
+                      </a>
+            <a href="ksh/100/index.html" class="btn btn-100" onclick="saveVisit('كشف ركاب جديد')">
+                ➕ كشف ركاب جديد
+            </a>
+        </div>
+
+        <div class="menu-column">
+            <h2>🔍 قائمة تقرير الفحص</h2>
+            <a href="tq/1/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: عيسى شافي')">
+                👤 عيسى محمد شافي
+            </a>
+            <a href="tq/2/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: صالح امين')">
+                👤 صالح محمد امين
+            </a>
+            <a href="tq/3/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: مصطفى عبد الماجيد')">
+                👤 مصطفى مبارك عبد الماجيد
+            </a>
+            <a href="tq/4/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: حبيب كالو')">
+                👤 حبيب محمد كالو
+            </a>
+            <a href="tq/5/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: محمد موسى')">
+                👤 محمد محمد حسين موسى
+            </a>
+            <a href="tq/6/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: حسين احمد')">
+                👤 حسين عبدالملك نور احمد
+            </a>
+            <a href="tq/7/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: ابراهيم مياه')">
+                👤 ابراهيم ولي مياه
+            </a>
+            <a href="tq/8/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: نور عبدالعزيز')">
+                👤 نور عبدالعزيز مخلص
+            </a>
+            <a href="tq/9/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: عواف المشور')">
+                👤 عواف محمد هاشم المشور
+            </a>
+            <a href="tq/10/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: محمد حسين')">
+                👤 محمد احمد محمد حسين
+            </a>
+            <a href="tq/11/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: عبدالرحمن علي')">
+                👤 عبدالرحمن اصدر علي
+            </a>
+            <a href="tq/12/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: رشاد اسلام')">
+                👤 رشاد عبدالمجيد محمد اسلام
+            </a>
+            <a href="tq/13/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: يوسف عبدالكريم')">
+                👤 يوسف ابو حسين عبدالكريم
+            </a>
+            <a href="tq/14/index.html" class="btn btn-tq" onclick="saveVisit('تقرير فحص: محمد اكبر')">
+                👤 محمد اكبر محمدعلي
+            </a>
+            <a href="tq/100/index.html" class="btn btn-100" onclick="saveVisit('تقرير فحص جديد')">
+                📝 تقرير فحص جديد
+            </a>
+        </div>
+
+        <div id="status" class="status-bar">مرحباً بك في نظام شركة درب لاين</div>
+    </div>
+
+    <script>
+        // حفظ آخر عملية تمت في المتصفح
+        function saveVisit(actionName) {
+            localStorage.setItem('last_action', actionName);
+            const now = new Date();
+            const timeString = now.toLocaleDateString('ar-SA') + " | " + now.toLocaleTimeString('ar-SA');
+            localStorage.setItem('last_action_time', timeString);
+        }
+
+        // تحديث شريط الحالة عند التحميل
+        window.onload = function() {
+            const lastAction = localStorage.getItem('last_action');
+            const lastTime = localStorage.getItem('last_action_time');
+            if (lastAction) {
+                document.getElementById('status').innerHTML = 
+                    "📂 <b>آخر إجراء:</b> " + lastAction + " <br> <small>" + lastTime + "</small>";
+            }
+        }
+    </script>
+
+</body>
+</html>

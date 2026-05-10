@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>تقرير الفحص - تاريخ تلقائي</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
+        body { 
+            background-color: #525659; 
+            margin: 0; padding: 0; 
+            display: flex; flex-direction: column; align-items: center; 
+            font-family: 'Arial', sans-serif; 
+        }
+        .toolbar { width: 100%; background: #333; padding: 15px; position: sticky; top: 0; z-index: 1000; text-align: center; }
+        .share-btn, .print-btn, .back-btn, .clear-btn { padding: 12px 20px; border: none; border-radius: 50px; cursor: pointer; font-size: 14px; font-weight: bold; margin: 5px; color: white; }
+        .share-btn { background: #27ae60; }
+        .print-btn { background: #e67e22; }
+        .back-btn { background: #95a5a6; }
+        .clear-btn { background: #c0392b; }
+        
+        #pdf-content { 
+            width: 210mm; 
+            background: white; 
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .page { 
+            width: 210mm; 
+            height: 296.8mm; 
+            position: relative; 
+            background-color: white; 
+            overflow: hidden; 
+            display: block; 
+            page-break-after: always;
+        }
+
+        #page1 { background-image: url('0001.jpg'); background-size: 100% 100%; background-repeat: no-repeat; }
+
+        input { position: absolute; background: rgba(255, 255, 255, 0.5); border: 1px solid #ccc; font-size: 14px; text-align: center; outline: none; color: black; }
+        .exporting input { border: none !important; background: transparent !important; }
+
+        /* تموضع الخانات */
+        .from-loc { top: 223px; left: 50px; width: 145px; }
+        .to-loc { top: 223px; left: 205px; width: 145px; }
+        .name-loc { top: 223px; left: 523px; width: 220px; }
+        .name2-loc { top: 848px; left: 520px; width: 150px; }
+        .loha-loc { top: 223px; left: 365px; width: 145px; }
+
+
+
+        @media print { 
+            .toolbar { display: none !important; }
+            body { background: white; }
+            #pdf-content { margin: 0; }
+            @page { size: A4; margin: 0; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toolbar">
+        <button id="shareBtn" class="share-btn">📤 مشاركة واتساب PDF</button>
+        <button id="printBtn" class="print-btn">🖨️ طباعة كمبيوتر</button>
+        <button class="clear-btn" onclick="clearData()">🗑️ مسح البيانات</button>
+        <button class="back-btn" onclick="window.history.back()">رجوع</button>
+    </div>
+
+    <div id="pdf-content">
+        <div class="page" id="page1">
+            <input type="text" id="fromInput" class="from-loc" data-save="d6">
+            <input type="text" id="toInput" class="to-loc" data-save="d7">
+            <input type="text" id="nameInput" class="name-loc" data-save="d8">
+            <input type="text" id="mame2Input" class="name2-loc" data-save="d9">
+            <input type="text" class="loha-loc" data-save="d10">
+        </div>
+    </div>
+
+    <script>
+        const path = window.location.pathname;
+        let pageID = path.includes('/1/') ? "D1_" : (path.includes('/2/') ? "D2_" : "D3_");
+        
+        const allInputs = document.querySelectorAll('input[data-save]');
+
+        // دالة للحصول على تاريخ اليوم بتنسيق YYYY-MM-DD
+        function getTodayDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            let mm = today.getMonth() + 1; 
+            let dd = today.getDate();
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            return yyyy + '-' + mm + '-' + dd;
+        }
+
+        // استرجاع البيانات أو وضع التاريخ التلقائي
+        window.addEventListener('load', () => {
+            const today = getTodayDate();
+            allInputs.forEach(input => {
+                const storageKey = pageID + input.getAttribute('data-save');
+                
+                // التحقق مما إذا كانت الخانة هي d6 أو d7 (خانات التاريخ)
+                if (input.getAttribute('data-save') === 'd6' || input.getAttribute('data-save') === 'd7') {
+                    // وضع تاريخ اليوم وحفظه فوراً ليحل محل أي بيانات قديمة
+                    input.value = today;
+                    localStorage.setItem(storageKey, today);
+                } else {
+                    // الخانات الأخرى يتم استرجاعها كالمعتاد
+                    const savedVal = localStorage.getItem(storageKey);
+                    if (savedVal) {
+                        input.value = savedVal;
+                    }
+                }
+
+                // حفظ التغييرات عند الكتابة اليدوية (اختياري)
+                input.addEventListener('input', () => {
+                    localStorage.setItem(storageKey, input.value);
+                });
+            });
+
+      });  function clearData() { 
+            if(confirm("هل تريد مسح البيانات؟ (سيتم إعادة تعيين التاريخ عند التحديث)")) { 
+                allInputs.forEach(i => { 
+                    localStorage.removeItem(pageID+i.getAttribute('data-save')); 
+                    i.value=''; 
+                }); 
+            } 
+        }
+
+        // وظيفة المشاركة
+        document.getElementById('shareBtn').addEventListener('click', async function() {
+            const element = document.getElementById('pdf-content');
+            const btn = this;
+            btn.disabled = true;
+            element.classList.add('exporting');
+            window.scrollTo(0, 0);
+
+            const opt = {
+                margin: 0,
+                filename: `تقرير_${getTodayDate()}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                const worker = html2pdf().set(opt).from(element);
+                const pdfBlob = await worker.output('blob');
+                const file = new File([pdfBlob], "Report.pdf", { type: "application/pdf" });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({ files: [file], title: 'تقرير الفحص' });
+                } else {
+                    await worker.save();
+                }
+            } catch (err) {
+                html2pdf().set(opt).from(element).save();
+            } finally {
+                element.classList.remove('exporting');
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('printBtn').addEventListener('click', () => window.print());
+    </script>
+</body>
+</html>
